@@ -1,0 +1,25 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - SERVERPORT=51820
+      - ALLOWEDIPS=0.0.0.0/0
+    volumes:
+      - ./wg0.conf:/config/wg0.conf
+      - ./wireguard-extra/cont-init.d:/custom-cont-init.d
+      - ./wireguard-extra/services.d:/custom-services.d
+      - ./wireguard-extra/danted.conf:/config/danted.conf
+      - /lib/modules:/lib/modules
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    ports:
+      - 51820:51820/udp
+      - 1080:1080/tcp
+    restart: unless-stopped
